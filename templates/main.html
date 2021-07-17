@@ -15,20 +15,18 @@
 <h1>Welcome {{ user.name }}</h1>
 
 <div id="demo" class="row">
-    <div id="items-1" class="list-group col">
-        <div id="item-1.1" data-id="1.1" class="list-group-item nested-1">Item 1.1</div>
-        <div id="item-1.2" data-id="1.2" class="list-group-item nested-1">Item 1.2</div>
-        <div id="item-1.3" data-id="1.3" class="list-group-item nested-1">Item 1.3</div>
-        <div id="item-1.4" data-id="1.4" class="list-group-item nested-1">Item 1.4</div>
-        <div id="item-1.5" data-id="1.5" class="list-group-item nested-1">Item 1.5</div>
+    <div id="all-patrollers" class="list-group col">
+    <div>PATROLLERS</div>
+        {% for patroller in patrollers %}
+        <div id="patroller-{{ patroller.id }}" data-id="{{ patroller.id }}" class="list-group-item nested-1">{{ patroller }}</div>
+        {% endfor %}
     </div>
-    <div id="items-2" class="list-group col">
-        <div id="item-2.1" data-id="2.1" class="list-group-item nested-1">Item 2.1</div>
-        <div id="item-2.2" data-id="2.2" class="list-group-item nested-1">Item 2.2</div>
-        <div id="item-2.3" data-id="2.3" class="list-group-item nested-1">Item 2.3</div>
-        <div id="item-2.4" data-id="2.4" class="list-group-item nested-1">Item 2.4</div>
-        <div id="item-2.5" data-id="2.5" class="list-group-item nested-1">Item 2.5</div>
+    {% for point in watchpoints %}
+    <div id="point-{{ point.id }}" class="list-group col">
+    <div>{{ point }}</div>
+        <div id="item-{{ point.id }}.1" data-id="{{ point.id }}.1" class="list-group-item nested-1">Item 2.1</div>
     </div>
+    {% endfor %}
 </div>
 
 <!-- Optional JavaScript -->
@@ -46,20 +44,21 @@
 <script src="https://cdn.jsdelivr.net/npm/jquery-sortablejs@latest/jquery-sortable.js"></script>
 
 <script>
-    $('#items-1').sortable({
+    $('#all-patrollers').sortable({
         group: 'list',
         animation: 200,
         ghostClass: 'ghost',
         onSort: reportActivity,
     });
 
-    // List 2
-    $('#items-2').sortable({
+    // List {% for point in watchpoints %}
+    $('#point-{{ point.id }}').sortable({
         group: 'list',
         animation: 200,
         ghostClass: 'ghost',
         onSort: reportActivity,
     });
+    {% endfor %}
 
     // Arrays of "data-id"
     $('#get-order').click(function () {

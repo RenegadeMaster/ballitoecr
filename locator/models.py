@@ -11,6 +11,8 @@ class Patroller(models.Model):
     cell = models.CharField(max_length=255)
     email = models.CharField(max_length=255, null=True, blank=True)
     telegram = models.CharField(max_length=255, null=True, blank=True)
+    preferred_shifts = models.ManyToManyField('Shift', related_name='patroller_pref_shift')
+    preferred_watchpoint = models.ManyToManyField('WatchPoint', related_name='patroller_pref_point')
 
     def __str__(self):
         if self.code_name is not None and self.code_name != '':
