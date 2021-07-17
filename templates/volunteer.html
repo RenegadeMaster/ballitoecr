@@ -14,7 +14,9 @@
 </head>
 <body>
 <h1>Volunteer to man Checkpoints</h1>
-
+{% if success %}
+    <h2 style="color: green">Thank you for volunteering! It makes a difference. We will be in touch</h2>
+{% endif %}
 <form method="post">
     {% csrf_token %}
     {{ form|crispy }}

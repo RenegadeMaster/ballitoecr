@@ -1,3 +1,4 @@
+{% load locator_extras %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -11,24 +12,47 @@
 
     <title>Ballito ERS</title>
 </head>
-<body>
+<body style="margin: 40px">
 <h1>Welcome {{ user.name }}</h1>
-
-<div id="demo" class="row">
-    <div id="all-patrollers" class="list-group col">
-    <div>PATROLLERS</div>
+<div class="row">
+    <div id="all-patrollers" class="list-group col-2">
+        <div>PATROLLERS</div>
         {% for patroller in patrollers %}
-        <div id="patroller-{{ patroller.id }}" data-id="{{ patroller.id }}" class="list-group-item nested-1">{{ patroller }}</div>
+            <div id="patroller-{{ patroller.id }}" data-id="{{ patroller.id }}" class="list-group-item nested-1">
+                {{ patroller }}<br/>
+                {% if patroller.preferred_shifts %}
+                    {% for sh in patroller.preferred_shifts.all %}
+                        <span>{{ sh }} | </span>
+                    {% endfor %}
+                {% endif %}
+                <br/>
+                {% if patroller.preferred_watchpoint %}
+                    {% for w in patroller.preferred_watchpoint.all %}
+                        <span>{{ w.abbreviation }} | </span>
+                    {% endfor %}
+                {% endif %}
+            </div>
         {% endfor %}
     </div>
-    {% for point in watchpoints %}
-    <div id="point-{{ point.id }}" class="list-group col">
-    <div>{{ point }}</div>
-        <div id="item-{{ point.id }}.1" data-id="{{ point.id }}.1" class="list-group-item nested-1">Item 2.1</div>
+    <div class="col-10">
+        {% for sh in shifts %}
+            <div id="{{ sh.id }}" class="row">
+                {% for point in watchpoints %}
+                    <div id="sh_{{ sh.id }}_pt_{{ point.id }}" class="list-group col">
+                        <div>{{ point }} : {{ sh }} </div>
+                            {% with 'sh_'|addstr:sh.id|addstr:'_pt_'|addstr:point.id as team_key %}
+                                {% if team_key in team_keys %}
+                            <div id="sh_{{ sh.id }}_pt_{{ point.id }}" data-id="{{ point.id }}.1" class="list-group-item nested-1">Item
+                                2.1
+                            </div>
+                                {% endif %}
+                            {% endwith %}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endfor %}
     </div>
-    {% endfor %}
 </div>
-
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
@@ -40,7 +64,9 @@
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
         integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
         crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js" integrity="sha512-zYXldzJsDrNKV+odAwFYiDXV2Cy37cwizT+NkuiPGsa9X1dOz04eHvUWVuxaJ299GvcJT31ug2zO4itXBjFx4w==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"
+        integrity="sha512-zYXldzJsDrNKV+odAwFYiDXV2Cy37cwizT+NkuiPGsa9X1dOz04eHvUWVuxaJ299GvcJT31ug2zO4itXBjFx4w=="
+        crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-sortablejs@latest/jquery-sortable.js"></script>
 
 <script>
@@ -50,14 +76,15 @@
         ghostClass: 'ghost',
         onSort: reportActivity,
     });
-
-    // List {% for point in watchpoints %}
-    $('#point-{{ point.id }}').sortable({
-        group: 'list',
-        animation: 200,
-        ghostClass: 'ghost',
-        onSort: reportActivity,
-    });
+    {% for sh in shifts %}
+        {% for point in watchpoints %}
+            $('#sh_{{ sh.id }}_pt_{{ point.id }}').sortable({
+                group: 'list',
+                animation: 200,
+                ghostClass: 'ghost',
+                onSort: reportActivity,
+            });
+        {% endfor %}
     {% endfor %}
 
     // Arrays of "data-id"
@@ -69,7 +96,7 @@
     });
 
     // Report when the sort order has changed
-    function reportActivity() {
+    function reportActivity(e) {
         console.log('The sort order has changed');
     };
 </script>
