@@ -51,10 +51,11 @@ class MainView(TemplateView):
 
         all_teams = Team.objects.all()
         context['team_keys'] = []
+        context['team_patrollers'] = {}
         for team in all_teams:
             if team.patrollers is not None and team.patrollers.count() > 0:
                 key = 'sh_' + str(team.shift.id) + '_pt_'+str(team.watch_point.id)
-                context[key] = [ p for p in team.patrollers.all()]
+                context['team_patrollers'][key] = [p for p in team.patrollers.all()]
                 context['team_keys'].append(key)
         context['teams'] = all_teams
         # sh_{{ sh.id }}_pt-{{ point.id }}

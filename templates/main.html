@@ -18,20 +18,22 @@
     <div id="all-patrollers" class="list-group col-2">
         <div>PATROLLERS</div>
         {% for patroller in patrollers %}
-            <div id="patroller-{{ patroller.id }}" data-id="{{ patroller.id }}" class="list-group-item nested-1">
-                {{ patroller }}<br/>
-                {% if patroller.preferred_shifts %}
-                    {% for sh in patroller.preferred_shifts.all %}
-                        <span>{{ sh }} | </span>
-                    {% endfor %}
-                {% endif %}
-                <br/>
-                {% if patroller.preferred_watchpoint %}
-                    {% for w in patroller.preferred_watchpoint.all %}
-                        <span>{{ w.abbreviation }} | </span>
-                    {% endfor %}
-                {% endif %}
-            </div>
+            {% if patroller.team_set.count == 0 %}
+                <div id="patroller-{{ patroller.id }}" data-id="{{ patroller.id }}" class="list-group-item nested-1">
+                    {{ patroller }}<br/>
+                    {% if patroller.preferred_shifts %}
+                        {% for sh in patroller.preferred_shifts.all %}
+                            <span>{{ sh }} | </span>
+                        {% endfor %}
+                    {% endif %}
+                    <br/>
+                    {% if patroller.preferred_watchpoint %}
+                        {% for w in patroller.preferred_watchpoint.all %}
+                            <span>{{ w.abbreviation }} | </span>
+                        {% endfor %}
+                    {% endif %}
+                </div>
+            {% endif %}
         {% endfor %}
     </div>
     <div class="col-10">
@@ -40,13 +42,27 @@
                 {% for point in watchpoints %}
                     <div id="sh_{{ sh.id }}_pt_{{ point.id }}" class="list-group col">
                         <div>{{ point }} : {{ sh }} </div>
-                            {% with 'sh_'|addstr:sh.id|addstr:'_pt_'|addstr:point.id as team_key %}
-                                {% if team_key in team_keys %}
-                            <div id="sh_{{ sh.id }}_pt_{{ point.id }}" data-id="{{ point.id }}.1" class="list-group-item nested-1">Item
-                                2.1
-                            </div>
-                                {% endif %}
-                            {% endwith %}
+                        {% with 'sh_'|addstr:sh.id|addstr:'_pt_'|addstr:point.id as team_key %}
+                            {% if team_key in team_keys %}
+                                {% for patroller in team_patrollers|hash:team_key %}
+                                    <div id="patroller-{{ patroller.id }}" data-id="{{ patroller.id }}"
+                                         class="list-group-item nested-1">
+                                        {{ patroller }}<br/>
+                                        {% if patroller.preferred_shifts %}
+                                            {% for sh in patroller.preferred_shifts.all %}
+                                                <span>{{ sh }} | </span>
+                                            {% endfor %}
+                                        {% endif %}
+                                        <br/>
+                                        {% if patroller.preferred_watchpoint %}
+                                            {% for w in patroller.preferred_watchpoint.all %}
+                                                <span>{{ w.abbreviation }} | </span>
+                                            {% endfor %}
+                                        {% endif %}
+                                    </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
                     </div>
                 {% endfor %}
             </div>
