@@ -1,3 +1,6 @@
+import json
+
+from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
 
 # Create your views here.
@@ -61,6 +64,19 @@ class MainView(TemplateView):
         # sh_{{ sh.id }}_pt-{{ point.id }}
         return context
 
+def reassign_team(request):
+    # post contains controller ID, source and destination id's
+    body = request.body.decode()
+    data = json.loads(body)
+    print(data)
+    # remove from Team A (if exists) add to team B
+    try:
+        pass # remove
+    except:
+        pass
+
+    
+    return JsonResponse({'success': True})
 
 class RegisterView(TemplateView):
 

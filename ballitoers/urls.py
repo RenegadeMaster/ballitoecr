@@ -17,10 +17,11 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path, include
 
-from locator.views import MainView, RegisterView
+from locator.views import MainView, RegisterView, reassign_team
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('main/', MainView.as_view()),
     path('signup/', RegisterView.as_view()),
+    path('updatepatroller/', reassign_team),
 ]

@@ -71,9 +71,7 @@
 </div>
 <!-- Optional JavaScript -->
 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
-        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
-        crossorigin="anonymous"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
         integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
         crossorigin="anonymous"></script>
@@ -84,6 +82,8 @@
         integrity="sha512-zYXldzJsDrNKV+odAwFYiDXV2Cy37cwizT+NkuiPGsa9X1dOz04eHvUWVuxaJ299GvcJT31ug2zO4itXBjFx4w=="
         crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 <script src="https://cdn.jsdelivr.net/npm/jquery-sortablejs@latest/jquery-sortable.js"></script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js" integrity="sha512-3j3VU6WC5rPQB4Ld1jnLV7Kd5xr+cq9avvhwqzbH/taCRNURoeEpoPBK9pDyeukwSxwRPJ8fDgvYXd6SkaZ2TA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
 
 <script>
     $('#all-patrollers').sortable({
@@ -103,17 +103,44 @@
         {% endfor %}
     {% endfor %}
 
-    // Arrays of "data-id"
-    $('#get-order').click(function () {
-        var sort1 = $('#items-1').sortable('toArray');
-        console.log(sort1);
-        var sort2 = $('#items-2').sortable('toArray');
-        console.log(sort2);
-    });
 
     // Report when the sort order has changed
-    function reportActivity(e) {
-        console.log('The sort order has changed');
+    function reportActivity(e) { //note this gets double-called
+        console.log('drag drop end change');
+        let patroller_id = e.item.id.split('-')[1];
+        let source_id = e.from.id.split('_');
+        let source_shift = source_id[1];
+        let source_point = source_id[3];
+        let destination_id = e.target.id.split('_');
+        let dest_shift = destination_id[1];
+        let dest_point = destination_id[3];
+        console.log(`source: shift ${source_shift} point ${source_point}, destination: shift ${dest_shift} point ${dest_point}, patroller id: ${patroller_id}`)
+
+        var csrftoken = $.cookie('csrftoken');
+        $.ajax({
+            url: '/updatepatroller/',
+            headers: {
+                'X-CSRFToken': csrftoken
+            },
+            method: 'POST',
+            data: JSON.stringify({
+                'patroller_id':patroller_id,
+                'source_shift':source_shift,
+                'source_point':source_point,
+                'dest_shift':dest_shift,
+                'dest_point':dest_point
+            }),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            beforeSend: function(){
+            },
+            error: function (obj, textStatus, errorThrown) {
+                alert("status=" + textStatus + ",error=" + errorThrown);
+            },
+            success: function (data) {
+
+            }
+        });
     };
 </script>
 </body>
