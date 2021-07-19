@@ -75,7 +75,7 @@ def reassign_team(request):
     except:
         pass
 
-    
+
     return JsonResponse({'success': True})
 
 class RegisterView(TemplateView):
