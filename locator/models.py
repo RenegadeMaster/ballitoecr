@@ -36,6 +36,12 @@ class Team(models.Model):
     shift = models.ForeignKey('Shift', on_delete=models.DO_NOTHING)
     day = models.DateField()
 
+    # def __eq__(self, other):
+    #     """Overrides the default implementation"""
+    #     if isinstance(other, Team):
+    #         return self.day == other.day and self.shift.id == other.shift.id and self.watch_point.id == other.watch_point.id
+    #     return False
+
 
 class WatchPoint(models.Model):
     name = models.CharField(max_length=255)

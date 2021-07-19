@@ -65,7 +65,7 @@
                         {% endwith %}
                     </div>
                 {% endfor %}
-            </div>
+            </div><br/><br/>
         {% endfor %}
     </div>
 </div>
@@ -114,7 +114,12 @@
         let destination_id = e.target.id.split('_');
         let dest_shift = destination_id[1];
         let dest_point = destination_id[3];
+
         console.log(`source: shift ${source_shift} point ${source_point}, destination: shift ${dest_shift} point ${dest_point}, patroller id: ${patroller_id}`)
+
+        if ((source_shift==dest_shift)&&(source_point==dest_point)) {
+            return;
+        }
 
         var csrftoken = $.cookie('csrftoken');
         $.ajax({
